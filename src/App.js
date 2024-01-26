@@ -1,25 +1,70 @@
-import logo from './logo.svg';
+import React, { useState, useRef } from 'react';
 import './App.css';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [mediaKey, setMediaKey] = useState('');
+    const [uploaded, setUploaded] = useState(false);
+    const fileInputRef = useRef();
+
+    const handleUploadClick = () => {
+        fileInputRef.current.click();
+    };
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        console.log('Uploading file:', file);
+        // Your upload logic here
+        // After successful upload, set a media key
+        const mockMediaKey = '12345'; // Replace with actual generated key
+        setMediaKey(mockMediaKey);
+        setUploaded(true);
+    };
+
+    const handleDownloadClick = () => {
+        console.log('Downloading media with key:', mediaKey);
+        // Your download logic here
+    };
+
+    const handleCopyKey = () => {
+        navigator.clipboard.writeText(mediaKey).then(() => {
+            alert('Media key copied to clipboard!');
+        }, (err) => {
+            console.error('Could not copy text: ', err);
+        });
+    };
+
+    return (
+        <div className="App">
+            <header className="App-header">
+                <h1>Photo Sharing</h1>
+
+                <input
+                    type="file"
+                    style={{ display: 'none' }}
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                />
+                <button onClick={handleUploadClick}>Upload</button>
+
+                {uploaded && (
+                    <div className="media-key-display">
+                        <input type="text" value={mediaKey} readOnly />
+                        <button onClick={handleCopyKey}>Copy</button>
+                    </div>
+                )}
+
+                <div style={{ margin: '20px' }} />
+
+                <input
+                    type="text"
+                    value={mediaKey}
+                    onChange={(e) => setMediaKey(e.target.value)}
+                    placeholder="Enter media key"
+                />
+                <button onClick={handleDownloadClick}>Download</button>
+            </header>
+        </div>
+    );
 }
 
 export default App;
