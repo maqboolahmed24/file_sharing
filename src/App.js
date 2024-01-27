@@ -10,15 +10,33 @@ function App() {
         fileInputRef.current.click();
     };
 
-    const handleFileChange = (event) => {
+    const handleFileChange = async (event) => {
         const file = event.target.files[0];
         console.log('Uploading file:', file);
-        // Your upload logic here
-        // After successful upload, set a media key
-        const mockMediaKey = '12345'; // Replace with actual generated key
-        setMediaKey(mockMediaKey);
-        setUploaded(true);
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const response = await fetch('http://localhost:3000/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                const text = await response.text();
+                console.log("Response from server:", text); // Log the server response
+                alert('File uploaded successfully: ' + text);
+            } else {
+                console.error('Upload failed');
+                alert('Upload failed');
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
+
 
     const handleDownloadClick = () => {
         console.log('Downloading media with key:', mediaKey);
