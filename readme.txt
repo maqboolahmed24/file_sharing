@@ -24,3 +24,6 @@ Click on 'Select Files' or the file upload area to choose a file from your compu
 Click the 'Send' button.
 If everything is set up correctly, you should receive a response indicating the file was uploaded successfully.
 }
+
+date: 3feb24
+changed some ui for user and fixed download functionality by changing the port address from 3000 to 5000 and some minor changes in the server.js

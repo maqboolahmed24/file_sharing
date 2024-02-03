@@ -1,86 +1,95 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 
 function App() {
-    const [mediaKey, setMediaKey] = useState('');
-    const [uploaded, setUploaded] = useState(false);
-    const fileInputRef = useRef();
+    const [file, setFile] = useState(null);
+    const [filename, setFilename] = useState('');
+    const [uploadStatus, setUploadStatus] = useState('');
+    const [downloadStatus, setDownloadStatus] = useState('');
 
-    const handleUploadClick = () => {
-        fileInputRef.current.click();
+    const handleFileChange = (event) => {
+        setFile(event.target.files[0]);
     };
 
-    const handleFileChange = async (event) => {
-        const file = event.target.files[0];
-        console.log('Uploading file:', file);
+    const handleFilenameChange = (event) => {
+        setFilename(event.target.value);
+    };
+
+    const handleUpload = async () => {
+        if (!file) {
+            alert('Please select a file first.');
+            return;
+        }
 
         const formData = new FormData();
         formData.append('file', file);
 
         try {
-            const response = await fetch('http://localhost:3000/upload', {
+            const response = await fetch('/upload', {
                 method: 'POST',
                 body: formData,
             });
 
             if (response.ok) {
-                const text = await response.text();
-                console.log("Response from server:", text); // Log the server response
-                alert('File uploaded successfully: ' + text);
+                setUploadStatus('File uploaded successfully.');
             } else {
-                console.error('Upload failed');
-                alert('Upload failed');
+                setUploadStatus('Upload failed.');
             }
-
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Upload error:', error);
+            setUploadStatus('Upload failed.');
         }
     };
 
+    const handleDownload = async () => {
+        if (!filename) {
+            alert('Please enter a filename to download.');
+            return;
+        }
 
-    const handleDownloadClick = () => {
-        console.log('Downloading media with key:', mediaKey);
-        // Your download logic here
-    };
-
-    const handleCopyKey = () => {
-        navigator.clipboard.writeText(mediaKey).then(() => {
-            alert('Media key copied to clipboard!');
-        }, (err) => {
-            console.error('Could not copy text: ', err);
-        });
+        window.fetch(`/download/${filename}`)
+            .then((response) => {
+                if (response.ok) {
+                    response.blob().then((blob) => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        a.download = filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        setDownloadStatus('Download started.');
+                    });
+                } else {
+                    setDownloadStatus('File not found.');
+                }
+            })
+            .catch((error) => {
+                console.error('Download error:', error);
+                setDownloadStatus('Download failed.');
+            });
     };
 
     return (
         <div className="App">
-            <header className="App-header">
-                <h1>Photo Sharing</h1>
-
-                <input
-                    type="file"
-                    style={{ display: 'none' }}
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                />
-                <button onClick={handleUploadClick}>Upload</button>
-
-                {uploaded && (
-                    <div className="media-key-display">
-                        <input type="text" value={mediaKey} readOnly />
-                        <button onClick={handleCopyKey}>Copy</button>
-                    </div>
-                )}
-
-                <div style={{ margin: '20px' }} />
-
+            <div>
+                <h2>File Upload</h2>
+                <input type="file" onChange={handleFileChange} />
+                <button onClick={handleUpload}>Upload</button>
+                {uploadStatus && <p>{uploadStatus}</p>}
+            </div>
+            <div>
+                <h2>File Download</h2>
                 <input
                     type="text"
-                    value={mediaKey}
-                    onChange={(e) => setMediaKey(e.target.value)}
-                    placeholder="Enter media key"
+                    value={filename}
+                    onChange={handleFilenameChange}
+                    placeholder="Enter filename to download"
                 />
-                <button onClick={handleDownloadClick}>Download</button>
-            </header>
+                <button onClick={handleDownload}>Download</button>
+                {downloadStatus && <p>{downloadStatus}</p>}
+            </div>
         </div>
     );
 }
