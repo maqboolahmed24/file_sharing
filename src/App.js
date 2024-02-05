@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+
 
 function App() {
     const [file, setFile] = useState(null);
     const [filename, setFilename] = useState('');
     const [uploadStatus, setUploadStatus] = useState('');
     const [downloadStatus, setDownloadStatus] = useState('');
+    const [isUploading, setIsUploading] = useState(false);
+    //const [filesList, setFilesList] = useState([]);
+    const [fileKey, setFileKey] = useState('');
 
     const handleFileChange = (event) => {
         setFile(event.target.files[0]);
@@ -24,6 +28,7 @@ function App() {
         const formData = new FormData();
         formData.append('file', file);
 
+        setIsUploading(true);
         try {
             const response = await fetch('/upload', {
                 method: 'POST',
@@ -39,7 +44,11 @@ function App() {
             console.error('Upload error:', error);
             setUploadStatus('Upload failed.');
         }
+        setIsUploading(false);
     };
+
+
+
 
     const handleDownload = async () => {
         if (!filename) {
@@ -73,12 +82,17 @@ function App() {
 
     return (
         <div className="App">
+            {/* File Upload Section */}
             <div>
                 <h2>File Upload</h2>
                 <input type="file" onChange={handleFileChange} />
                 <button onClick={handleUpload}>Upload</button>
-                {uploadStatus && <p>{uploadStatus}</p>}
+                <div className="status-message">
+                    {isUploading ? 'Uploading...' : uploadStatus}
+                </div>
             </div>
+
+            {/* File Download Section */}
             <div>
                 <h2>File Download</h2>
                 <input
@@ -88,10 +102,14 @@ function App() {
                     placeholder="Enter filename to download"
                 />
                 <button onClick={handleDownload}>Download</button>
-                {downloadStatus && <p>{downloadStatus}</p>}
+                <div className="status-message">
+                    {downloadStatus}
+                </div>
             </div>
         </div>
     );
+
+
 }
 
 export default App;
