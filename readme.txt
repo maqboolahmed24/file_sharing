@@ -27,3 +27,10 @@ If everything is set up correctly, you should receive a response indicating the 
 
 date: 3feb24
 changed some ui for user and fixed download functionality by changing the port address from 3000 to 5000 and some minor changes in the server.js
+
+
+dependencies///
+1: npm install uuid
+
+
+when you start the server in your machine, chage the IP address (IPv4) with your own machine IP.
