@@ -1,7 +1,7 @@
 /* General Styles */
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f4f4f4;
+    background-color: #eeffef;
     margin: 0;
     padding: 0;
 }
@@ -10,6 +10,42 @@ body {
     text-align: center;
     color: #333;
 }
+
+
+
+
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+
+th {
+    background-color: #04AA6D;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+
+
+
+
+
+
 
 /* Header Styles */
 header {
@@ -38,13 +74,13 @@ button {
 }
 
 button {
-    background-color: #5cb85c;
+    background-color: #7e4089;
     color: white;
     cursor: pointer;
 }
 
     button:hover {
-        background-color: #4cae4c;
+        background-color: #4800ff;
     }
 
 /* Status Message Styles */
@@ -60,6 +96,8 @@ button {
     background-color: #eee;
     display: inline-block;
 }
+
+
 
 /* Responsive Design */
 @media (max-width: 768px) {
